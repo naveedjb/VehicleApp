@@ -1,0 +1,172 @@
+<div class="container">
+  <h1>{{ title }}</h1>
+
+  <!-- Add Vehicle Form -->
+  <div class="form-section">
+    <h2>Add New Vehicle</h2>
+    
+    <div *ngIf="errorMessage" class="alert alert-error">
+      {{ errorMessage }}
+    </div>
+    
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+      <!-- Make Field -->
+      <div class="form-group">
+        <label for="make">
+          Make <span class="required">*</span>
+          <span class="hint">(2-50 characters, letters/numbers only)</span>
+        </label>
+        <input 
+          type="text" 
+          id="make" 
+          formControlName="make"
+          placeholder="e.g., Toyota"
+          [maxlength]="validation.MAKE_MAX_LENGTH"
+          [class.invalid]="make?.invalid && make?.touched">
+        
+        <div *ngIf="make?.invalid && make?.touched" class="validation-error">
+          <small *ngIf="make?.errors?.['required']">Make is required</small>
+          <small *ngIf="make?.errors?.['minlength']">
+            Make must be at least {{ validation.MAKE_MIN_LENGTH }} characters
+          </small>
+          <small *ngIf="make?.errors?.['maxlength']">
+            Make cannot exceed {{ validation.MAKE_MAX_LENGTH }} characters
+          </small>
+          <small *ngIf="make?.errors?.['invalidCharacters']">
+            Only letters, numbers, spaces, and hyphens allowed
+          </small>
+        </div>
+      </div>
+
+      <!-- Model Field -->
+      <div class="form-group">
+        <label for="model">
+          Model <span class="required">*</span>
+          <span class="hint">(2-50 characters, letters/numbers only)</span>
+        </label>
+        <input 
+          type="text" 
+          id="model" 
+          formControlName="model"
+          placeholder="e.g., Camry"
+          [maxlength]="validation.MODEL_MAX_LENGTH"
+          [class.invalid]="model?.invalid && model?.touched">
+        
+        <div *ngIf="model?.invalid && model?.touched" class="validation-error">
+          <small *ngIf="model?.errors?.['required']">Model is required</small>
+          <small *ngIf="model?.errors?.['minlength']">
+            Model must be at least {{ validation.MODEL_MIN_LENGTH }} characters
+          </small>
+          <small *ngIf="model?.errors?.['maxlength']">
+            Model cannot exceed {{ validation.MODEL_MAX_LENGTH }} characters
+          </small>
+          <small *ngIf="model?.errors?.['invalidCharacters']">
+            Only letters, numbers, spaces, and hyphens allowed
+          </small>
+        </div>
+      </div>
+
+      <!-- Year Field -->
+      <div class="form-group">
+        <label for="year">
+          Year <span class="required">*</span>
+          <span class="hint">({{ validation.YEAR_MIN }}-{{ validation.YEAR_MAX }})</span>
+        </label>
+        <input 
+          type="number" 
+          id="year" 
+          formControlName="year"
+          [min]="validation.YEAR_MIN"
+          [max]="validation.YEAR_MAX"
+          [class.invalid]="year?.invalid && year?.touched">
+        
+        <div *ngIf="year?.invalid && year?.touched" class="validation-error">
+          <small *ngIf="year?.errors?.['required']">Year is required</small>
+          <small *ngIf="year?.errors?.['min']">
+            Year must be at least {{ validation.YEAR_MIN }}
+          </small>
+          <small *ngIf="year?.errors?.['max']">
+            Year cannot exceed {{ validation.YEAR_MAX }}
+          </small>
+        </div>
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn-primary"
+        [disabled]="vehicleForm.invalid || isSubmitting">
+        {{ isSubmitting ? 'Adding...' : 'Add Vehicle' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Vehicle List -->
+  <div class="table-section">
+    <h2>Vehicle List</h2>
+    
+    <div *ngIf="isLoading" class="loading">
+      Loading vehicles...
+    </div>
+
+    <div *ngIf="!isLoading && vehicles.length === 0" class="no-data">
+      No vehicles found. Add one above!
+    </div>
+
+    <div *ngIf="!isLoading && vehicles.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Year</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let vehicle of vehicles; trackBy: trackByVehicleId">
+            <td>{{ vehicle.id }}</td>
+            <td>{{ vehicle.make }}</td>
+            <td>{{ vehicle.model }}</td>
+            <td>{{ vehicle.year }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination Controls -->
+      <div class="pagination">
+        <div class="pagination-info">
+          Showing {{ vehicles.length }} of {{ totalCount }} vehicles
+          (Page {{ currentPage }} of {{ totalPages }})
+        </div>
+        
+        <div class="pagination-buttons">
+          <button 
+            class="btn-pagination" 
+            (click)="previousPage()" 
+            [disabled]="currentPage === 1">
+            Previous
+          </button>
+          
+          <button 
+            *ngFor="let page of [].constructor(totalPages); let i = index"
+            class="btn-page"
+            [class.active]="currentPage === i + 1"
+            (click)="goToPage(i + 1)">
+            {{ i + 1 }}
+          </button>
+          
+          <button 
+            class="btn-pagination" 
+            (click)="nextPage()" 
+            [disabled]="currentPage === totalPages">
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

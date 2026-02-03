@@ -1,0 +1,31 @@
+# =========================
+# .NET
+# =========================
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+.vs/
+.github/
+# =========================
+# Angular / Node
+# =========================
+node_modules/
+dist/
+npm-debug.log*
+yarn-error.log*
+
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# =========================
+# Environment
+# =========================
+.env
